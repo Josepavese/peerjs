@@ -63,6 +63,7 @@ export class MediaConnection extends BaseConnection<MediaConnectionEvents> {
 
 		if (this._localStream) {
 			this._negotiator.startConnection({
+                ...this.options,
 				_stream: this._localStream,
 				originator: true,
 			});
@@ -139,6 +140,7 @@ export class MediaConnection extends BaseConnection<MediaConnectionEvents> {
 		this._negotiator.startConnection({
 			...this.options._payload,
 			_stream: stream,
+            options: this.options
 		});
 		// Retrieve lost messages stored because PeerConnection not set up.
 		const messages = this.provider._getMessages(this.connectionId);

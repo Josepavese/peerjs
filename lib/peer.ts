@@ -550,6 +550,20 @@ export class Peer extends EventEmitterWithError<PeerErrorType, PeerEvents> {
 			...options,
 			_stream: stream,
 		});
+
+        const pc = mediaConnection.peerConnection
+
+        const hasAudio = stream?.getAudioTracks()?.length > 0;
+        const hasVideo = stream?.getVideoTracks()?.length > 0;
+
+        const audioDirection = options?.transceivers?.audio || hasAudio? 'sendrecv' : 'recvonly'
+        // creo un nuove rtpTransceiver
+        pc.addTransceiver('audio', { direction: audioDirection });
+
+          
+        const videoDirection = options?.transceivers?.video || hasVideo? 'sendrecv' : 'recvonly'
+        pc.addTransceiver('audio', { direction: videoDirection });
+
 		this._addConnection(peer, mediaConnection);
 		return mediaConnection;
 	}

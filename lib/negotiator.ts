@@ -42,6 +42,15 @@ export class Negotiator<
 			);
 			dataConnection._initializeDataChannel(dataChannel);
 
+            const hasAudio = options._stream?.getAudioTracks().length > 0;
+            const hasVideo = options._stream?.getVideoTracks().length > 0;
+
+            const audioDir = options.transceivers?.audio || (hasAudio ? 'sendrecv' : 'recvonly');
+            const videoDir = options.transceivers?.video || (hasVideo ? 'sendrecv' : 'recvonly');
+
+            peerConnection.addTransceiver('audio', { direction: audioDir });
+            peerConnection.addTransceiver('video', { direction: videoDir });
+
 			void this._makeOffer();
 		} else {
 			void this.handleSDP("OFFER", options.sdp);

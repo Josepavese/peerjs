@@ -48,4 +48,9 @@ export interface CallOption {
 	 * Function which runs before create offer to modify sdp offer message.
 	 */
 	sdpTransform?: Function;
+
+    transceivers?: {
+        audio: RTCRtpTransceiverDirection,
+        video: RTCRtpTransceiverDirection
+    }
 }
