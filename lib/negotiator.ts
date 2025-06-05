@@ -48,9 +48,33 @@ export class Negotiator<
             const audioDir = options.transceivers?.audio || (hasAudio ? 'sendrecv' : 'recvonly');
             const videoDir = options.transceivers?.video || (hasVideo ? 'sendrecv' : 'recvonly');
 
-            peerConnection.addTransceiver('audio', { direction: audioDir });
-            peerConnection.addTransceiver('video', { direction: videoDir });
+            const hasAudioTransceiver = peerConnection.getTransceivers().find(t =>
+                // look at the sender.track first (our outgoing audio)
+                (t.sender.track?.kind === 'audio') ||
+                // fall-back to receiver.track if you care about incoming
+                (t.receiver.track?.kind === 'audio')
+            );
 
+            const hasVideoTransceiver = peerConnection.getTransceivers().find(t =>
+                // look at the sender.track first (our outgoing video)
+                (t.sender.track?.kind === 'video') ||
+                // fall-back to receiver.track if you care about incoming
+                (t.receiver.track?.kind === 'video')
+            );
+            if (hasAudioTransceiver) {
+                hasAudioTransceiver.direction = audioDir;
+            }
+            if (hasVideoTransceiver) {
+                hasVideoTransceiver.direction = videoDir;
+            }
+            // add transceivers for audio and video
+            if (!hasAudioTransceiver) {
+                peerConnection.addTransceiver('audio', { direction: audioDir });
+            }
+            if (!hasVideoTransceiver) {
+                peerConnection.addTransceiver('video', { direction: videoDir });
+            }
+            
 			void this._makeOffer();
 		} else {
 			void this.handleSDP("OFFER", options.sdp);
