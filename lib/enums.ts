@@ -82,6 +82,11 @@ export enum SocketEventType {
 	Disconnected = "disconnected",
 	Error = "error",
 	Close = "close",
+    HeartbeatTimeout = "heartbeat-timeout",
+    Heartbeat = "heartbeat",
+    Reconnect = "reconnect",
+    ReconnectFailed = "reconnect-failed",
+    Open = "open",
 }
 
 export enum ServerMessageType {
