@@ -1,7 +1,7 @@
 import { EventEmitter } from "eventemitter3";
 const logger = console;
 import { ServerMessageType, SocketEventType } from "./enums";
-import { version } from "../package.json";
+import { version } from "./version";
 
 /**
  * Production-ready, robust WebSocket abstraction for PeerJS.
