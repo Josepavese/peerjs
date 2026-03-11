@@ -142,9 +142,10 @@ export class Socket extends EventEmitter {
 
         this._socket.onerror = (event) => {
             if (instanceId !== this._instanceId) return;
+            if (this._userClosed) return;
             logger.log("[Socket] Error:", event);
-            this._socket!.close(); // Let onclose handle recovery
-            this.emit(SocketEventType.Error, event);
+            // Treat transient network errors as recoverable: onclose will run reconnect.
+            this._socket!.close();
         };
     }
 

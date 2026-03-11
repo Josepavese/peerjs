@@ -313,7 +313,10 @@ export class Peer extends EventEmitterWithError<PeerErrorType, PeerEvents> {
 		});
 
 		socket.on(SocketEventType.Error, (error: string) => {
-			this._abort(PeerErrorType.SocketError, error);
+			// Keep socket/network errors non-fatal: Socket handles reconnect internally.
+			if (this.disconnected || this.destroyed) return;
+			this._open = false;
+			this.emitError(PeerErrorType.Network, error);
 		});
 
 		// socket.on(SocketEventType.Disconnected, () => {
@@ -325,17 +328,16 @@ export class Peer extends EventEmitterWithError<PeerErrorType, PeerEvents> {
 		// 	this.disconnect();
 		// });
 
-        socket.on(SocketEventType.Disconnected, () => {
-            // Instead of:
-            if (this.disconnected) return;
+		socket.on(SocketEventType.Disconnected, () => {
+			if (this.disconnected || this.destroyed) return;
 
-            // this.disconnect();
-
-            // Do:
-            logger.warn("Lost connection to server. Waiting for automatic reconnect...");
-            // Optionally, emit a temporary status event
-            this.emitError(PeerErrorType.Network, this.id); // custom event, not fatal
-        });
+			this._open = false;
+			logger.warn("Lost connection to server. Waiting for automatic reconnect...");
+			this.emitError(
+				PeerErrorType.Network,
+				"Lost connection to server. Waiting for automatic reconnect...",
+			);
+		});
 
 		socket.on(SocketEventType.Close, () => {
 			if (this.disconnected) {
