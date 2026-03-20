@@ -13,8 +13,12 @@ CACHE_DIR="$PROJECT_ROOT/.build-cache"
 FINGERPRINT_FILE="$CACHE_DIR/peerjs-build-input.sha256"
 DIST_SENTINEL="$PROJECT_ROOT/dist/peerjs.min.js"
 
-# nvm can fail when a global npm prefix is forced by the parent environment.
+# Keep the build isolated from parent npm workspace/config context.
+# This script is often invoked from another monorepo workspace.
 unset npm_config_prefix NPM_CONFIG_PREFIX || true
+unset npm_config_workspace NPM_CONFIG_WORKSPACE || true
+unset npm_config_workspaces NPM_CONFIG_WORKSPACES || true
+unset npm_config_include_workspace_root NPM_CONFIG_INCLUDE_WORKSPACE_ROOT || true
 
 sha256_file() {
   local file="$1"
