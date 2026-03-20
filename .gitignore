@@ -16,6 +16,7 @@ demo
 bower.json
 node_modules
 .parcel-cache
+.build-cache
 .idea
 npm-debug.log
 .DS_STORE
