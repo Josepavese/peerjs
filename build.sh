@@ -19,6 +19,8 @@ unset npm_config_prefix NPM_CONFIG_PREFIX || true
 unset npm_config_workspace NPM_CONFIG_WORKSPACE || true
 unset npm_config_workspaces NPM_CONFIG_WORKSPACES || true
 unset npm_config_include_workspace_root NPM_CONFIG_INCLUDE_WORKSPACE_ROOT || true
+export npm_config_workspaces=false
+export npm_config_include_workspace_root=false
 
 sha256_file() {
   local file="$1"
@@ -96,16 +98,16 @@ fi
 # 4. Install dependencies (deterministic, no pre-/post-install scripts)
 #-----------------------------------------------------------------------------
 if [[ -f package-lock.json ]]; then
-  npm ci --ignore-scripts
+  npm --workspaces=false --include-workspace-root=false ci --ignore-scripts
 else
-  npm install --ignore-scripts
+  npm --workspaces=false --include-workspace-root=false install --ignore-scripts
 fi
 
 #-----------------------------------------------------------------------------
 # 5. Build the project
 #-----------------------------------------------------------------------------
 echo "> Running build…"
-npm run build:raw
+npm --workspaces=false --include-workspace-root=false run build:raw
 
 printf '%s\n' "$CURRENT_FINGERPRINT" > "$FINGERPRINT_FILE"
 echo "✓ Build complete using Node $(node -v)"
