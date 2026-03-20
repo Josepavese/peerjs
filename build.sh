@@ -107,7 +107,9 @@ fi
 # 5. Build the project
 #-----------------------------------------------------------------------------
 echo "> Running build…"
-npm --workspaces=false --include-workspace-root=false run build:raw
+echo "export const version = \"$(node -p "require('./package.json').version")\";" > lib/version.ts
+rm -rf dist
+./node_modules/.bin/parcel build
 
 printf '%s\n' "$CURRENT_FINGERPRINT" > "$FINGERPRINT_FILE"
 echo "✓ Build complete using Node $(node -v)"
